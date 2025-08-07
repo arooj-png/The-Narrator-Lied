@@ -63,10 +63,7 @@ and thought: _“What if the AI knew you were the character?”_
 
 ## 🖼️ Demo Screenshot
 
-Here’s what the Ghost Story Analyzer looks like in action:
-
-![The Narrator Lied Demo](The Narrator Lied.png)
-
+Here’s what the Ghost Story Analyzer looks like in action: You can check the file named "The Narrator Lied.png"
 
 ---
 
