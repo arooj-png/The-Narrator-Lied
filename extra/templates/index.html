@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ghost Story Analyzer</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #f2f2f2;
+      font-family: 'Georgia', serif;
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h1, h2, h3 {
+      color: #ffccff;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background: #1a1a1a;
+      color: #f2f2f2;
+      border: 1px solid #333;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      resize: vertical;
+    }
+
+    button {
+      background: #990099;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #cc00cc;
+    }
+
+    .result {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #1e1e1e;
+      border-left: 4px solid #660066;
+      border-radius: 10px;
+    }
+
+    .choices {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .choices button {
+      flex: 1;
+    }
+
+    #choiceResult {
+      margin-top: 1.5rem;
+      background: #292929;
+      padding: 1rem;
+      border-left: 4px solid #444;
+      border-radius: 6px;
+    }
+
+    #footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>🕯️ You’re in a Ghost Story. Now What?</h1>
+  <p>Describe your scene or thoughts:</p>
+  <textarea id="story" placeholder="It was a cold night, and I heard footsteps..."></textarea><br>
+  <button onclick="analyze()">🔮 Analyze</button>
+
+  <div class="result" id="output" style="display:none;">
+    <h2>🧠 Analysis</h2>
+    <p><strong>Mood:</strong> <span id="mood"></span></p>
+    <p><strong>Archetype:</strong> <span id="archetype"></span></p>
+    <p><strong>Next Line:</strong> <em id="next_line"></em></p>
+    <p><strong>Quote:</strong> <em id="truth_summary"></em></p>
+    <p><strong>Soundtrack:</strong> <span id="soundtrack"></span></p>
+
+    <h3>What will you do?</h3>
+    <div class="choices">
+      <button id="choice1" onclick="makeChoice(0)"></button>
+      <button id="choice2" onclick="makeChoice(1)"></button>
+    </div>
+
+    <div id="choiceResult" style="display:none;">
+      <p><strong>You chose:</strong> <span id="selectedChoiceText"></span></p>
+      <p><strong>Outcome:</strong> <em id="choiceOutcome"></em></p>
+      <p style="color:gray;" id="easter_egg"></p>
+    </div>
+  </div>
+
+  <div id="footer">🧛 Built for haunted hearts • v1.0</div>
+
+  <script>
+    let currentData = null;
+
+    async function analyze() {
+      const story = document.getElementById("story").value.trim();
+      if (!story) {
+        alert("Please enter a ghost story!");
+        return;
+      }
+
+      try {
+        const response = await fetch("/analyze/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ story })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          alert("AI Error: " + (data.details || data.error));
+          return;
+        }
+
+        currentData = data;
+        document.getElementById("output").style.display = "block";
+        document.getElementById("choiceResult").style.display = "none";
+        document.getElementById("mood").innerText = data.mood || "Unknown";
+        document.getElementById("archetype").innerText = data.archetype || "Unknown";
+        document.getElementById("next_line").innerText = data.next_line || "No suggestion.";
+        document.getElementById("truth_summary").innerText = data.truth_summary || "No quote.";
+        document.getElementById("soundtrack").innerText = data.soundtrack || "Silence...";
+
+        document.getElementById("choice1").innerText = data.choices?.[0] || "Choice A";
+        document.getElementById("choice2").innerText = data.choices?.[1] || "Choice B";
+      } catch (err) {
+        alert("Something went wrong. Check console.");
+        console.error(err);
+      }
+    }
+
+    function makeChoice(index) {
+      if (!currentData || !currentData.choices) return;
+
+      const selectedChoice = currentData.choices[index] || "an unknown path";
+      const possibleOutcomes = [
+        "You feel a chill crawl down your spine...",
+        "A shadow moves in the corner of your eye.",
+        "Your flashlight flickers, then dies.",
+        "The door creaks open... but no one is there.",
+        "You hear your name whispered from the darkness."
+      ];
+      const randomOutcome = possibleOutcomes[Math.floor(Math.random() * possibleOutcomes.length)];
+      const easterEggs = [
+        "👻 Boo! Gotcha.",
+        "🧟 Maybe don't turn around.",
+        "🔮 You're not alone...",
+        "🦴 You stepped on something... or someone?",
+        "💀 That wasn't just the wind."
+      ];
+      const randomEgg = easterEggs[Math.floor(Math.random() * easterEggs.length)];
+
+      document.getElementById("selectedChoiceText").innerText = selectedChoice;
+      document.getElementById("choiceOutcome").innerText = randomOutcome;
+      document.getElementById("easter_egg").innerText = randomEgg;
+      document.getElementById("choiceResult").style.display = "block";
+    }
+  </script>
+</body>
+</html>
