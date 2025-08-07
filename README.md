@@ -61,6 +61,15 @@ and thought: _“What if the AI knew you were the character?”_
 
 ---
 
+## 🖼️ Demo Screenshot
+
+Here’s what the Ghost Story Analyzer looks like in action:
+
+![The Narrator Lied Demo](the-narrator-lied.png)
+
+
+---
+
 ## 📜 License
 
 MIT — use it, fork it, but beware:  
