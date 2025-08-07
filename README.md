@@ -31,8 +31,8 @@ When you input a story excerpt, the AI will:
 
 ## 🛠️ Tech Stack
 
-- **Python** (core logic)
-- **Flask** (backend)
+- **Python and API** (core logic)
+- **Python** (backend)
 - **Gemini API** (for natural language analysis and generation)
 - **HTML/CSS** (minimal frontend)
 
